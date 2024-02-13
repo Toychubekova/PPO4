@@ -7,7 +7,7 @@ class RawMaterials(models.Model):
     Unit_id = models.ForeignKey(Unit, on_delete=models.CASCADE, db_column='Unit_id')
 
     Quantity = models.FloatField()
-    Amount = models.DecimalField(max_digits=19, decimal_places=2)
+    Amount = models.FloatField('Amount')
 
     class Meta:
         db_table = 'RawMaterials'

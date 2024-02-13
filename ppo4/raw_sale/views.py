@@ -1,93 +1,56 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import RawMaterialPurchase
-from .forms import EmployeeForm, ProductSaleFormFilter
-from django.db.models import Sum
-from datetime import date
-from django.db import connection
-from django.contrib import messages
-from django.http import HttpResponseServerError
+from django.db import transaction
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, CreateView
+from django.db.models import F
 
-def list(request):
-    if request.method == 'POST':
-        form = ProductSaleFormFilter(request.POST)
-        if form.is_valid():
-            start_date = form.cleaned_data['start_date']
-            end_date = form.cleaned_data['end_date']
-            employees = RawMaterialPurchase.objects.filter(Date__range=[start_date, end_date])
-            total_amount = employees.aggregate(total_amount=Sum('Amount'))['total_amount'] or 0
-    else:
-        form = ProductSaleFormFilter()
-        employees = RawMaterialPurchase.objects.all()
-        total_amount = employees.aggregate(total_amount=Sum('Amount'))['total_amount'] or 0
+from raw_sale.models import Budget, RawSale
+from raw_sale.forms import MaterialPurchaseForm
 
-    context = {'employees': employees, 'form': form, 'total_amount': total_amount}
 
-    return render(request, 'rawSale_list.html', context)
-def detail(request, pk):
-    employee = get_object_or_404(RawMaterialPurchase, pk=pk)
-    return render(request, 'rawSale_detail.html', {'employee': employee})
+class MaterialPurchaseView(ListView):
+    model = RawSale
+    template_name = 'material_purchase/materials_purchase-list.html'
+    context_object_name = 'material_purchase'
 
-# def create(request):
-#     if request.method == 'POST':
-#         form = EmployeeForm(request.POST)
-#         if form.is_valid():
-#             employee = form.save(commit=False)
-#             employee.save()
-#             return redirect('rawSale_detail', pk=employee.pk)
-#     else:
-#         form = EmployeeForm()
-#     return render(request, 'rawSale_form.html', {'form': form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['raw_sale'] = RawSale.objects.all().select_related('material')
+        context['budget'] = Budget.objects.first()
+        return context
 
-def check_budget_enough(amount):
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("DECLARE @result INT; EXEC @result = IsBudgetEnough @amount=%s; SELECT @result;", [amount])
-            result = cursor.fetchone()
-            if result:
-                return result[0]
-    except Exception as e:
-        print(f"Error executing SQL: {e}")
-        return -1
-    return -1
 
-def create(request):
-    if request.method == 'POST':
-        form = EmployeeForm(request.POST)
-        if form.is_valid():
-            amount = form.cleaned_data['Amount']
-            # with connection.cursor() as cursor:
-            #     cursor.execute("EXEC [dbo].[IsBudgetEnough] @amount=%s", [amount])
-            #     result = cursor.fetchone()
-            # is_budget_enough = result[0] == 0
-            is_budget_enough = check_budget_enough(amount)
-            if not is_budget_enough:
-                employee = form.save(commit=False)
-                employee.save()
-                return redirect('rawSale_detail', pk=employee.pk)
-            else:
-                messages.error(request, 'Бюджет недостаточен для проведения операции.')
+class CreateMaterialPurchaseView(CreateView):
+    model = RawSale
+    template_name = 'material_purchase/material_purchase-create.html'
+    form_class = MaterialPurchaseForm
+    #success_url = reverse_lazy('material_purchase:index')
+    success_url = reverse_lazy('raw_sale:index')
+
+    @transaction.atomic
+    def form_valid(self, form):
+        # Получить экземпляр покупки материала
+        raw_sale = form.save(commit=False)
+
+        # Проверить, достаточно ли бюджета
+        budget = Budget.objects.first()
+        if raw_sale.amount <= budget.quantity:
+            # Уменьшить сумму бюджета
+            budget.quantity -= raw_sale.amount
+            budget.save()
+
+            # Увеличить количество материала в наличии
+            material = raw_sale.material
+            material.Quantity += raw_sale.quantity
+            material.save()
+
+            # Увеличить сумму закупки
+            raw_sale.save()
+            material.Amount += raw_sale.amount
+            material.save()
+
+            return super().form_valid(form)
         else:
-            # Ваша логика, если форма невалидна
-            messages.error(request, 'Форма содержит ошибки.')
-    else:
-        form = EmployeeForm()
-
-    return render(request, 'rawSale_form.html', {'form': form})
-
-
-def edit(request, pk):
-    employee = get_object_or_404(RawMaterialPurchase, pk=pk)
-    if request.method == 'POST':
-        form = EmployeeForm(request.POST, instance=employee)
-        if form.is_valid():
-            employee = form.save(commit=False)
-            employee.save()
-            return redirect('rawSale_detail', pk=employee.pk)
-    else:
-        form = EmployeeForm(instance=employee)
-    return render(request, 'rawSale_edit.html', {'form': form, 'employee': employee})
-
-def delete(request, pk):
-    employee = get_object_or_404(RawMaterialPurchase, pk=pk)
-    employee.delete()
-    return redirect('rawSale_list')
+            # Если бюджет недостаточен, показать сообщение об ошибке
+            form.add_error(None, "Недостаточно бюджета для этой покупки.")
+            return self.form_invalid(form)

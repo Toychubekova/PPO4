@@ -1,0 +1,37 @@
+{% extends 'index.html' %}
+{% block title %}Purchase of raw materials{% endblock %}
+
+{% block content %}
+<div>
+    <p>Budget: {{ budget.quantity }}</p>
+    <h1>A list of Raw sale</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Raw material</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Employees</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for raw_sal in raw_sale %}
+                <tr>
+                    <td>{{ raw_sal.id }}</td>
+                    <td>{{ raw_sal.material }}</td>
+                    <td>{{ raw_sal.quantity }}</td>
+                    <td>{{ raw_sal.amount }}</td>
+                    <td>{{ raw_sal.date }}</td>
+                    <td>{{ raw_sal.employees }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+        <button onclick="location.href='{% url 'raw_sale:create' %}'">Создать новую запись</button>
+    </div>
+</div>
+{% endblock %}

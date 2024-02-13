@@ -12,5 +12,6 @@ urlpatterns = [
     path('ingredients/',include('ingredients.urls')),
     path('raw_sale/',include('raw_sale.urls')),
     path('finish/',include('fproduct.urls')),
+    path('raw_sale/', include('raw_sale.urls')),
 
 ]

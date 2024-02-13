@@ -1,10 +1,10 @@
 from django.urls import path
-from . import views
+from raw_sale.views import (MaterialPurchaseView, CreateMaterialPurchaseView)
+
+
+app_name = 'raw_sale'
 
 urlpatterns = [
-    path('', views.list, name='rawSale_list'),
-    path('<int:pk>/', views.detail, name='rawSale_detail'),
-    path('new/', views.create, name='rawSale_create'),
-    path('<int:pk>/edit/', views.edit, name='rawSale_edit'),
-    path('<int:pk>/delete/', views.delete, name='rawSale_delete'),
+    path('', MaterialPurchaseView.as_view(), name='index'),
+    path('create/', CreateMaterialPurchaseView.as_view(), name='create'),
 ]
