@@ -1,0 +1,18 @@
+
+{% extends 'index.html' %}
+
+{% block title %}Finished products{% endblock %}
+
+{% block content %}
+<div class="list-page">
+    <div class="flex-container">
+        <h2 >Change finished products</h2>
+        <a href="{% url 'FProduct_list' %}"><button type="button" class="btn btn-outline-secondary">Back</button></a>
+    </div>
+    <form  method="post" action="{% url 'FProduct_edit' pk=Finish.pk %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-outline-info">Save</button>
+    </form>
+</div>
+{% endblock %}

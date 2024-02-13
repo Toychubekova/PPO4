@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Finished products{% endblock %}
+
+{% block content %}
+    <div class="list-page">
+        <div class="flex-container">
+            <h2 >A list of finished products</h2>
+            <a href="{% url 'FProduct_create' %}"><button type="button" class="btn btn-outline-primary">Add</button></a>
+        </div>
+        <ul class="list-group">
+            {% for Finish in Finishs %}
+            <li class="list-group-item list-custom-item">
+                <a href="{% url 'FProduct_detail' pk=Finish.pk %}" class="list-group-item list-group-item-action list-custom-a" >{{ Finish.Name }} </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

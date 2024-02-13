@@ -1,0 +1,17 @@
+ {% extends 'index.html' %}
+
+  {% block title %}Ingredients{% endblock %}
+
+  {% block content %}
+    <div class="list-page">
+      <div class="flex-container">
+        <h2 >Add ingredients</h2>
+        <a href="{% url 'ingredients_list' %}"><button type="button" class="btn btn-outline-secondary">Back</button></a>
+      </div>
+      <form method="post" action="{% url 'ingredients_create' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-outline-primary">Create</button>
+      </form>
+    </div>
+  {% endblock %}

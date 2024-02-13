@@ -1,0 +1,67 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Raw Materials{% endblock %}
+
+{% block content %}
+<style>
+  .list-page {
+    margin: 20px 0;
+    max-width: 800px;
+  }
+
+  h2 {
+    color: #000;
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+
+  .list-group {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .list-group-item {
+    background-color: #f8f9fa;
+    color: #212529;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn {
+    margin-right: 10px;
+  }
+</style>
+
+<div class="list-page">
+  <div>
+    <h2>A list of raw materials</h2>
+  </div>
+  <ul class="list-group">
+    {% for raw in raws %}
+    <li class="list-group-item">
+      <div>
+        {{ raw.Name }} - {{ raw.Unit_id }} - {{ raw.Quantity }} - {{ raw.Amount }}
+      </div>
+      <div>
+        <a href="{% url 'rawedit' pk=raw.pk %}" class="btn btn-outline-info">Change</a>
+        <a href="{% url 'rawdelete' pk=raw.pk %}" class="btn btn-outline-danger" onclick="return confirmDelete('{{ raw.Name }}')">Delete</a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="flex-container">
+    <a href="{% url 'rawcreate' %}" class="btn btn-outline-primary">Add</a>
+  </div>
+</div>
+
+<script>
+  function confirmDelete(rawName) {
+    return confirm("Are you sure you want to delete " + rawName + "?");
+  }
+</script>
+{% endblock %}

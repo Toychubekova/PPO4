@@ -1,0 +1,68 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Employees{% endblock %}
+{% block content %}
+<style>
+  .list-page {
+    margin: 20px 0;
+    max-width: 800px;
+  }
+
+  h2 {
+    color: #000;
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+
+  .list-group {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .list-group-item {
+    background-color: #f8f9fa;
+    color: #212529;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+  }
+
+  .flex-container:last-child {
+    margin-top: 10px;
+  }
+
+  .btn {
+    margin-right: 10px;
+  }
+
+  .list-group-item-horizontal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .list-group-item-horizontal strong {
+    margin-right: 10px;
+  }
+</style>
+
+<div class="list-page">
+  <div>
+    <h2>A list of employees</h2>
+  </div>
+  <ul class="list-group">
+    {% for employee in employees %}
+    <li class="list-group-item list-group-item-horizontal">
+      {{ employee.Full_Name }} - {{ employee.Position }} - {{ employee.Salary }} - {{ employee.Address }} - {{ employee.Phone }}
+      <div>
+        <a href="{% url 'edit' pk=employee.pk %}" class="btn btn-outline-info">Change</a>
+        <a href="{% url 'delete' pk=employee.pk %}" class="btn btn-outline-danger">Delete</a>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="flex-container">
+    <a href="{% url 'create' %}" class="btn btn-outline-primary">Add</a>
+  </div>
+</div>
+{% endblock %}

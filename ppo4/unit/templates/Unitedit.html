@@ -1,0 +1,18 @@
+
+{% extends 'index.html' %}
+
+{% block title %}Unit{% endblock %}
+
+{% block content %}
+    <div class="list-page">
+        <div class="flex-container">
+            <h2 >Change unit</h2>
+            <a href="{% url 'Unitlist' %}"><button type="button" class="btn btn-outline-primary">Back</button></a>
+        </div>
+        <form  method="post" action="{% url 'Unitedit' pk=Unit.pk %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-outline-primary">Save</button>
+        </form>
+    </div>
+{% endblock %}
