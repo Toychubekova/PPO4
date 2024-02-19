@@ -4,8 +4,8 @@ from employees.models import Employees
 from django import forms
 
 class Budget(models.Model):
-    quantity = models.FloatField('Sum of budget')
-
+    quantity = models.FloatField('Amount of budget')
+    percentage = models.FloatField('Persent', default=0)
     class Meta:
         verbose_name = 'Budget'
         verbose_name_plural = 'Budgets'
@@ -15,7 +15,7 @@ class Budget(models.Model):
 
 class RawSale(models.Model):
     material = models.ForeignKey(RawMaterials,
-                                 on_delete=models.PROTECT,
+                                 on_delete=models.CASCADE,
                                  related_name='raw_sales',
                                  verbose_name='Raw Materials'
                                  )

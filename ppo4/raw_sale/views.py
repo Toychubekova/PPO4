@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from django.db.models import F
-
 from raw_sale.models import Budget, RawSale
 from raw_sale.forms import MaterialPurchaseForm
 
@@ -24,7 +23,6 @@ class CreateMaterialPurchaseView(CreateView):
     model = RawSale
     template_name = 'material_purchase/material_purchase-create.html'
     form_class = MaterialPurchaseForm
-    #success_url = reverse_lazy('material_purchase:index')
     success_url = reverse_lazy('raw_sale:index')
 
     @transaction.atomic
@@ -52,5 +50,5 @@ class CreateMaterialPurchaseView(CreateView):
             return super().form_valid(form)
         else:
             # Если бюджет недостаточен, показать сообщение об ошибке
-            form.add_error(None, "Недостаточно бюджета для этой покупки.")
+            form.add_error(None, "There is not enough budget for this purchase.")
             return self.form_invalid(form)

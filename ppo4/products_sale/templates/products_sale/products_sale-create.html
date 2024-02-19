@@ -1,11 +1,12 @@
 {% extends 'index.html' %}
-{% block title %}Purchase of Raw Materials{% endblock %}
+{% block title %}Sales of Product{% endblock %}
 
 {% block content %}
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Purchase of Raw Materials</title>
+    <title>Sales of Product</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -53,13 +54,13 @@
 </head>
 <body>
 <div>
-    <h1 class="h2">Add Raw Material Purchase</h1> <!-- Changed class to h2 -->
-    <form method="POST">
+    <form method="POST" action="">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-outline-primary">Add</button>
+        <button type="submit" class="btn btn-outline-primary">Add New Product</button>
     </form>
     <div>
+        <a href="{% url 'products_sale:index' %}" class="btn btn-outline-primary">Back</a>
     </div>
 </div>
 </body>

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rawmaterials',
     'unit',
     'raw_sale',
+    'products_sale',
 ]
 
 MIDDLEWARE = [

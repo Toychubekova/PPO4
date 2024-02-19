@@ -1,19 +1,27 @@
 {% extends 'index.html' %}
-{% block title %}Purchase of raw materials{% endblock %}
+{% load static %}
+
+{% block title %}Purchase of Raw Materials{% endblock %}
 
 {% block content %}
-<div>
-    <p>Budget: {{ budget.quantity }}</p>
-    <h1>A list of Raw sale</h1>
-    <table>
-        <thead>
+<div class="list-page">
+    <div class="budget">
+        <p>Budget: {{ budget.quantity }}</p>
+    </div>
+<div style="margin-top: 20px;" class="list-page">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;" class="flex-container">
+        <h2>A list of Raw Sales</h2>
+        <button onclick="location.href='{% url 'raw_sale:create' %}'" style="cursor: pointer;" class="btn btn-outline-primary">Create New Entry</button>
+    </div>
+    <table class="table table-striped"> <!-- Added 'table-striped' class for striped rows -->
+        <thead class="thead-dark">
             <tr>
-                <th>ID</th>
-                <th>Raw material</th>
-                <th>Quantity</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Employees</th>
+                <th scope="col">ID</th>
+                <th scope="col">Raw Material</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Date</th>
+                <th scope="col">Employees</th>
             </tr>
         </thead>
         <tbody>
@@ -29,9 +37,5 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <div>
-        <button onclick="location.href='{% url 'raw_sale:create' %}'">Создать новую запись</button>
-    </div>
 </div>
 {% endblock %}

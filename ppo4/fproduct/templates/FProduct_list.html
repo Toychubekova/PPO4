@@ -4,17 +4,59 @@
 {% block title %}Finished products{% endblock %}
 
 {% block content %}
+    <style>
+        .list-page {
+            margin: 20px 0;
+            max-width: 800px;
+        }
+
+        h2 {
+            color: #000;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .list-group {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .list-group-item {
+            background-color: #f8f9fa;
+            color: #212529;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+    </style>
+
     <div class="list-page">
         <div class="flex-container">
-            <h2 >A list of finished products</h2>
-            <a href="{% url 'FProduct_create' %}"><button type="button" class="btn btn-outline-primary">Add</button></a>
+            <h2>A list of finished products</h2>
+
         </div>
         <ul class="list-group">
             {% for Finish in Finishs %}
-            <li class="list-group-item list-custom-item">
-                <a href="{% url 'FProduct_detail' pk=Finish.pk %}" class="list-group-item list-group-item-action list-custom-a" >{{ Finish.Name }} </a>
+            <li class="list-group-item">
+                <div>
+                    {{ Finish.Name }} - {{ Finish.Unit_id }} - {{ Finish.Quantity }} - {{ Finish.Amount }}
+                </div>
+                <div>
+                    <a href="{% url 'FProduct_edit' pk=Finish.pk %}" class="btn btn-outline-info">Change</a>
+                    <a href="{% url 'FProduct_delete' pk=Finish.pk %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete {{ Finish.Name }}?')">Delete</a>
+                </div>
             </li>
             {% endfor %}
         </ul>
+        <div class="flex-container">
+            <a href="{% url 'FProduct_create' %}" class="btn btn-outline-primary">Add</a>
+        </div>
     </div>
 {% endblock %}

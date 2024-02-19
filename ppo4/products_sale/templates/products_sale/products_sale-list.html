@@ -1,0 +1,42 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Sales of Product{% endblock %}
+
+{% block content %}
+<div class="list-page">
+    <div class="budget">
+        <p>Budget: {{ budget.quantity }}</p>
+    </div>
+    <div style="margin-top: 20px;" class="list-page">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;" class="flex-container">
+            <h2>A list of product sales</h2>
+            <button onclick="location.href='{% url 'products_sale:create' %}'" style="cursor: pointer;" class="btn btn-outline-primary">Create New Entry</button>
+        </div>
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Employee</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product_sale in products_sale %}
+                    <tr>
+                        <td>{{ product_sale.id }}</td>
+                        <td>{{ product_sale.product }}</td>
+                        <td>{{ product_sale.quantity }}</td>
+                        <td>{{ product_sale.amount }}</td>
+                        <td>{{ product_sale.date }}</td>
+                        <td>{{ product_sale.employees }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
