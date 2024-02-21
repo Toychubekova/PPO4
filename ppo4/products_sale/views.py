@@ -33,11 +33,11 @@ class CreateProducts_saleView(CreateView):
         budget = Budget.objects.first()
 
         if product_sale.quantity > product_sale.product.Quantity:
-            form.add_error(None, 'Недостаточно продукта на складе.')
+            form.add_error(None, 'Not enough product in stock')
             return self.form_invalid(form)
 
-        product_quantity = product_sale.product.Quantity  # Правильный атрибут из модели Finishs
-        product_amount = product_sale.product.Amount  # Правильный атрибут из модели Finishs
+        product_quantity = product_sale.product.Quantity
+        product_amount = product_sale.product.Amount
 
         product_sale.amount = (product_amount / product_quantity) * product_sale.quantity
 

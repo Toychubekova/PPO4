@@ -15,7 +15,7 @@ def FProduct_create(request):
         form = FinishsForm(request.POST)
         if form.is_valid():
             raw = form.save()
-            return redirect('FProduct_detail', pk=raw.pk)
+            return redirect('FProduct_list')
     else:
         form = FinishsForm()
     return render(request, 'FProduct_form.html', {'form': form})
@@ -26,7 +26,7 @@ def FProduct_edit(request, pk):
         form = FinishsForm(request.POST, instance=raw)
         if form.is_valid():
             raw = form.save()
-            return redirect('FProduct_detail', pk=raw.pk)
+            return redirect('FProduct_list')
     else:
         form = FinishsForm(instance=raw)
     return render(request, 'FProduct_edit.html', {'form': form, 'Finish': raw})

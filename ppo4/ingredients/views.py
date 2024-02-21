@@ -32,7 +32,7 @@ def ingredients_create(request):
         form = IngredientsForm(request.POST)
         if form.is_valid():
             sale = form.save()
-            return redirect('ingredients_list', pk=sale.pk)
+            return redirect('ingredients_list')
     else:
         form = IngredientsForm(initial={'Product_id': request.session['product_id']})
     return render(request, 'ingredients_form.html', {'form': form})
