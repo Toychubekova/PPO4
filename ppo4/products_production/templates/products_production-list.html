@@ -1,10 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Список производства продукции{% endblock %}
+
+{% block content %}
+<style>
+    /* Общие стили */
+    .list-page {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 10px; /* Уменьшаем отступы */
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    /* Стиль данных в таблице */
+    .product-production-data td {
+        background-color: #ffffff;
+    }
+
+    /* Стиль кнопки добавить */
+    .btn-add {
+        background-color: #17a2b8; /* Изменяем цвет кнопки */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        margin-bottom: 10px; /* Уменьшаем отступ снизу */
+    }
+
+    /* Стиль кнопки добавить при наведении */
+    .btn-add:hover {
+        background-color: #138496; /* Изменяем цвет при наведении */
+    }
+
+    /* Стиль заголовка */
+    h2 {
+        text-align: center;
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="list-page">
+    <div style="margin-bottom: 10px; display: flex; justify-content: space-between;">
+        <h2>A list of production products</h2>
+        <button onclick="location.href='{% url 'products_production:create' %}'" class="btn btn-outline-primary">Create New Entry</button>
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Продукт</th>
+                    <th>Количество</th>
+                    <th>Сумма</th>
+                    <th>Дата</th>
+                    <th>Сотрудник</th>
+                </tr>
+            </thead>
+            <tbody class="product-production-data">
+                {% for product_production in products_production %}
+                <tr>
+                    <td>{{ product_production.id }}</td>
+                    <td>{{ product_production.product }}</td>
+                    <td>{{ product_production.quantity }}</td>
+                    <td>{{ product_production.amount }}</td>
+                    <td>{{ product_production.date }}</td>
+                    <td>{{ product_production.employees }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

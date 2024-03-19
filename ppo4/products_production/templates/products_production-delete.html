@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'index.html' %}
+{% load static %}
+{% block title %}Production of Product{% endblock %}
+
+<div>
+    <h1>Deleting product production</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <p>Are you sure you want to delete {{ object }}?</p>
+        {{ form }}
+        <input type="submit" value="Confirm">
+    </form>
+
+    <div>
+        <strong>
+            <a href="{% url 'products_production:index' %}">Back</a>
+        </strong>
+    </div>
+
+</div>
+
+{% endblock %}

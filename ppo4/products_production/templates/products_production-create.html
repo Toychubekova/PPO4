@@ -1,10 +1,29 @@
-<!DOCTYPE html>
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Добавление производства продукции{% endblock %}
+
+{% block content %}
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Добавление производства продукции</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css?{{ random_number }}">
+    <style>
+        /* Ваш стиль */
+    </style>
 </head>
 <body>
-$END$
+<div class="table-container">
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-outline-primary">Add</button>
+    </form>
+    <div>
+        <a href="{% url 'products_production:index' %}" class="btn btn-outline-secondary">Back</a>
+    </div>
+</div>
 </body>
 </html>
+{% endblock %}

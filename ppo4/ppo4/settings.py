@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'unit',
     'raw_sale',
     'products_sale',
+    'products_production',
+    'budget',
 ]
 
 MIDDLEWARE = [
