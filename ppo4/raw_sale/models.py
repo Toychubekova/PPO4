@@ -24,7 +24,7 @@ class RawSale(models.Model):
     date = models.DateTimeField('Date and time', auto_now_add=True)
     employees = models.ForeignKey(Employees,
                                  on_delete=models.PROTECT,
-                                 related_name='raw_sales',
+                                 related_name='procurements',
                                  verbose_name='Employees'
                                  )
 

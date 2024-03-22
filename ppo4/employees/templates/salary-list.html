@@ -1,0 +1,171 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block title %}Edit Employee{% endblock %}
+
+{% block content %}
+<style>
+    /* Общие стили */
+    .list-page {
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 10px; /* Уменьшаем отступы */
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    /* Стиль данных в таблице */
+    .employee-salaries-data td {
+        background-color: #ffffff;
+    }
+
+    /* Стиль кнопки редактировать */
+    .btn-edit {
+        background-color: #17a2b8; /* Изменяем цвет кнопки */
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1em;
+        cursor: pointer;
+        text-decoration: none; /* Убираем подчеркивание */
+    }
+
+    /* Стиль кнопки редактировать при наведении */
+    .btn-edit:hover {
+        background-color: #138496; /* Изменяем цвет при наведении */
+    }
+
+    /* Стиль заголовка */
+    h1 {
+        text-align: center;
+        font-size: 2em;
+        margin-bottom: 20px;
+    }
+
+    strong {
+        display: block; /* Чтобы добавить отступ снизу */
+        margin-bottom: 10px;
+    }
+
+    .messages {
+        list-style-type: none; /* Убираем маркеры */
+        padding: 0;
+    }
+
+    .messages li {
+        margin-bottom: 5px;
+    }
+
+    /* Стили для выпадающих списков */
+    #id_year,
+    #id_month {
+        display: inline-block;
+        vertical-align: middle; /* Добавим вертикальное выравнивание по середине */
+        margin-right: 10px; /* Добавляем небольшое расстояние между списками */
+    }
+
+</style>
+
+
+<div class="list-page">
+    <h1>Employee salaries</h1>
+
+    <form id="year_month_form" method="POST" style="display: inline-block;">
+    {% csrf_token %}
+    {{ choice_form.as_div }}
+    </form>
+
+    <div>Бюджет: {{budget}}</div>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('year_month_form');
+            const yearSelect = form.querySelector('#id_year');
+            const monthSelect = form.querySelector('#id_month');
+
+            yearSelect.addEventListener('change', function() {
+                if (yearSelect.value && monthSelect.value) {
+                    form.submit();
+                }
+            });
+
+            monthSelect.addEventListener('change', function() {
+                if (yearSelect.value && monthSelect.value) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+
+    {% if is_period_selected %}
+        <strong>
+            Total amount: {{ total_sum }} |
+            {% if not is_issued %}
+                <a href="{% url 'salary-issue' %}" class="btn btn-outline-primary">Issue</a>
+            {% else %}
+                Salaries for the selected period have already been issued to all employees
+            {% endif %}
+        </strong>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employees</th>
+                <th>Quantity of purchases</th>
+                <th>Quantity of productions</th>
+                <th>Quantity of sales</th>
+                <th>General</th>
+                <th>Salary</th>
+                <th>Bonus</th>
+                <th>To issue</th>
+                <th>Issued</th>
+            </tr>
+        </thead>
+        <tbody class="employee-salaries-data">
+            {% for salary in salaries %}
+                <tr>
+                    <td>{{ salary.employee }}</td>
+                    <td>{{ salary.procurements }}</td>
+                    <td>{{ salary.productions }}</td>
+                    <td>{{ salary.sales }}</td>
+                    <td>{{ salary.common }}</td>
+                    <td>{{ salary.employee.Salary }}</td>
+                    <td>{{ salary.bonus }}</td>
+                    <td>{{ salary.general }}</td>
+                    <td>{{ salary.is_issued }}</td>
+                    <td>
+                        {% if not salary.is_issued %}
+                            <a href="{% url 'salary-update' salary.id %}" class="btn btn-outline-info">Edit</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+{% endblock %}

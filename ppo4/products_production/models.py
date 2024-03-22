@@ -15,7 +15,7 @@ class Product_production(models.Model):
     date = models.DateTimeField('Date and time', auto_now_add=True)
     employees = models.ForeignKey(Employees,
                                  on_delete=models.PROTECT,
-                                 related_name='employees_product_production',
+                                 related_name='productions',
                                  verbose_name='Employee'
                                  )
 

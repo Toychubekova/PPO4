@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView
 from django.db.models import F
 from raw_sale.models import Budget, RawSale
 from raw_sale.forms import MaterialPurchaseForm
+from budget.models import Budget
 
 
 class MaterialPurchaseView(ListView):
@@ -32,9 +33,9 @@ class CreateMaterialPurchaseView(CreateView):
 
         # Проверить, достаточно ли бюджета
         budget = Budget.objects.first()
-        if raw_sale.amount <= budget.quantity:
+        if raw_sale.amount <= budget.budget:
             # Уменьшить сумму бюджета
-            budget.quantity -= raw_sale.amount
+            budget.budget -= raw_sale.amount
             budget.save()
 
             # Увеличить количество материала в наличии
