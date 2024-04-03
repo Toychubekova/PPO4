@@ -1,26 +1,16 @@
-from django.core.exceptions import ValidationError
-from django.db.models import Case, F, Sum, Value, When
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-
-from .models import Product_production
+from django.views.generic import ListView, CreateView, DeleteView, UpdateView
+from django.db import connection
+from django.utils import timezone
 from .forms import Products_productionForm
-from ingredients.models import Ingredients
-from fproduct.models import Finishs
-from products_production.models import Product_production
-
+from .models import Product_production
 
 class Products_productionView(ListView):
     model = Product_production
     template_name = 'products_production-list.html'
     context_object_name = 'products_production'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['products_production'] = Product_production.objects.all().select_related('product')
-
-        return context
 
 class CreateProducts_productionView(CreateView):
     model = Product_production
@@ -29,57 +19,43 @@ class CreateProducts_productionView(CreateView):
     success_url = reverse_lazy('products_production:index')
 
     def form_valid(self, form):
-        product_id = form.instance.product_id
+        product = form.instance.product
         product_quantity = form.cleaned_data['quantity']
+        employees_id = form.cleaned_data['employees']
 
 
-        ingredients = Ingredients.objects.filter(Product_id=product_id).select_related('RawMaterial_id')
-        total_sum = 0
-        enough_raw_materials = True
+        # Устанавливаем текущую дату и время для поля "date"
+        form.instance.date = timezone.now()
 
-        for ingredient in ingredients:
-            need_materials = ingredient.Quantity * product_quantity
-            need_materials_sum = (
-                                             ingredient.RawMaterial_id.Amount / ingredient.RawMaterial_id.Quantity) * need_materials
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "DECLARE @enough_product BIT; EXEC @enough_product = sp_checkProducts @product_id=%s, @product_quantity=%s; SELECT @enough_product",
+                [product.id, product_quantity]
+            )
+            enough_product = cursor.fetchone()
 
-            if ingredient.RawMaterial_id.Amount < need_materials_sum:
-                enough_raw_materials = False
-                form.add_error(None,
-                               f"There is not enough product to produce a given amount of product {ingredient.RawMaterial_id.Name}. "
-                               f"Required: {need_materials_sum}, In stock: {ingredient.RawMaterial_id.Amount}")
+            if enough_product is not None and enough_product[0] == 0:
+                form.add_error(None, "There is not enough of this product available.")
+                return self.form_invalid(form)
 
-            total_sum += need_materials_sum
+            cursor.execute(
+                "EXEC InsertProductProd @product_id=%s, @quantity=%s, @employees_id=%s",
+                [product.id, product_quantity, employees_id.id]
+            )
 
-        # Если нет достаточного количества сырья, возвращаем ошибку
-        if not enough_raw_materials:
-            return self.form_invalid(form)
+            # Вызываем хранимую процедуру InsertProductProd для вставки данных
+            cursor.execute(
+                "EXEC sp_updateProductAndRawMaterials @product_id=%s, @product_quantity=%s",
+                [product.id, product_quantity]
+            )
 
-
-        product = Finishs.objects.get(id=product_id)
-        product.Quantity += product_quantity
-        product.Amount += total_sum
-        product.save()
-
-
-        for ingredient in ingredients:
-            need_materials = ingredient.Quantity * product_quantity
-            need_materials_sum = (
-                                             ingredient.RawMaterial_id.Amount / ingredient.RawMaterial_id.Quantity) * need_materials
-            ingredient.RawMaterial_id.Quantity -= need_materials
-            ingredient.RawMaterial_id.Amount -= need_materials_sum
-            ingredient.RawMaterial_id.save()
-
-        # Добавляем общую сумму к объекту формы перед сохранением
-        form.instance.amount = total_sum
-
-        return super().form_valid(form)
+        return redirect('products_production:index')
 
 class UpdateProducts_productionView(UpdateView):
     model = Product_production
     template_name = 'products_production-update.html'
     form_class = Products_productionForm
     success_url = reverse_lazy('products_production:index')
-
 
 class DeleteProducts_productionView(DeleteView):
     model = Product_production

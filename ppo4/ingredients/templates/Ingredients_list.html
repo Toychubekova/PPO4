@@ -65,13 +65,12 @@
     <li class="list-group-item list-group-item-horizontal">
       <div class="flex-container">
         <div>
-          <a href="{% url 'ingredients_detail' pk=ingredient.pk %}" class="list-group-item list-group-item-action list-custom-a">
-            {{ ingredient.RawMaterial_id }} - {{ ingredient.Quantity }}
-          </a>
+          <!-- Убираем ссылку на ingredients_detail -->
+          {{ ingredient.0 }} - {{ ingredient.1 }}
         </div>
         <div class="flex-container btn-container">
-          <a href="{% url 'ingredients_edit' pk=ingredient.pk %}" class="btn btn-outline-primary">Change</a>
-          <a href="{% url 'ingredients_delete' pk=ingredient.pk %}" class="btn btn-outline-danger" onclick="return confirmDelete()">Delete</a>
+          <a href="{% url 'ingredients_edit' pk=ingredient.2 %}" class="btn btn-outline-primary">Change</a>
+          <a href="{% url 'ingredients_delete' pk=ingredient.2 %}" class="btn btn-outline-danger" onclick="return confirmDelete()">Delete</a>
         </div>
       </div>
     </li>

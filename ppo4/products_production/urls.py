@@ -1,7 +1,10 @@
 from django.urls import path
 
-from .views import Products_productionView, CreateProducts_productionView, UpdateProducts_productionView, DeleteProducts_productionView
+from .views import CreateProducts_productionView, UpdateProducts_productionView, DeleteProducts_productionView, \
+    Products_productionView
+
 app_name = 'products_production'
+
 
 urlpatterns = [
     path('', Products_productionView.as_view(), name='index'),

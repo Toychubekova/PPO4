@@ -7,3 +7,4 @@ class Products_productionForm(forms.ModelForm):
     class Meta:
         model = Product_production
         exclude = ['amount']
+
