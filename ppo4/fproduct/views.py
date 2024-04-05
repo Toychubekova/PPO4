@@ -51,16 +51,7 @@ from .models import Finishs
 
 
 def FProduct_delete(request, pk):
-    # Находим объект Finishs по его идентификатору
-    finish = get_object_or_404(Finishs, pk=pk)
-
-    # Проверяем, был ли отправлен POST-запрос (запрос на удаление объекта)
-    if request.method == 'POST':
-        # Удаляем объект из базы данных
-        finish.delete()
-        # После успешного удаления объекта, перенаправляем пользователя на страницу списка объектов
-        return redirect('FProduct_list')
-
-    # Если запрос был GET, просто возвращаем шаблон подтверждения удаления с информацией об объекте
-    return render(request, 'FProduct_delete_confirm.html', {'Finish': finish})
-
+    raw = get_object_or_404(Finishs, pk=pk)
+    with connection.cursor() as cursor:
+        cursor.execute("EXEC sp_delete_FProduct @pk=%s", [pk])
+    return redirect('FProduct_list')
