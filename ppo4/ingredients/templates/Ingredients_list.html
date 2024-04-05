@@ -69,12 +69,14 @@
           {{ ingredient.0 }} - {{ ingredient.1 }}
         </div>
         <div class="flex-container btn-container">
-          <a href="{% url 'ingredients_edit' pk=ingredient.2 %}" class="btn btn-outline-primary">Change</a>
-          <a href="{% url 'ingredients_delete' pk=ingredient.2 %}" class="btn btn-outline-danger" onclick="return confirmDelete()">Delete</a>
+          {% if ingredient.2 %}
+            <a href="{% url 'ingredients_edit' pk=product_id %}" class="btn btn-outline-primary">Change</a>
+            <a href="{% url 'ingredients_delete' pk=ingredient.2 %}" class="btn btn-outline-danger" onclick="return confirmDelete()">Delete</a>
+          {% endif %}
         </div>
       </div>
     </li>
-    {% endfor %}
+{% endfor %}
   </ul>
 </div>
 {% endblock %}

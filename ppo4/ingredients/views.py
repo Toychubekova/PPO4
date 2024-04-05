@@ -4,18 +4,26 @@ from .models import Ingredients
 from .forms import IngredientsForm, ProductForm
 from fproduct.models import Finishs
 
+from django.db import connection
+
+from django.contrib import messages
+
 def ingredients_create(request):
     if request.method == 'POST':
         form = IngredientsForm(request.POST)
         if form.is_valid():
-            form.save()
+            quantity = form.cleaned_data['Quantity']
+            product_id = form.cleaned_data['Product_id'].id
+            raw_material_id = form.cleaned_data['RawMaterial_id'].id
+            with connection.cursor() as cursor:
+                cursor.execute("EXEC CreateIngredient @Quantity=%s, @Product_id=%s, @RawMaterial_id=%s", [quantity, product_id, raw_material_id])
+            # Обновляем информацию о продукте в сессии
+            request.session['product_id'] = product_id
+            messages.success(request, 'Ингредиент успешно создан.')
             return redirect('ingredients_list')
     else:
         form = IngredientsForm()
-    return render(request, 'ingredients_create.html', {'form': form})
-
-
-
+    return render(request, 'ingredients_form.html', {'form': form})
 
 def ingredients_list(request):
     context = {}
@@ -32,9 +40,12 @@ def ingredients_list(request):
                 rows = cursor.fetchall()  # Получить результаты з
                 context['ingredients'] = rows
 
-        context['form'] = form
+            # Устанавливаем product_id в форме создания ингредиента
+            form = IngredientsForm(initial={'Product_id': pr_id.id})  # Устанавливаем product_id в форме
+            context['form'] = form
+            context['product_id'] = pr_id.id  # Добавляем product_id в контекст
 
-        return render(request, 'ingredients_list.html', context)
+            return render(request, 'ingredients_list.html', context)
     else:
         product_id = request.session.get('product_id')
         if product_id is not None:
