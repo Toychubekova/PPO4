@@ -3,6 +3,13 @@
   {% block title %}Ingredients{% endblock %}
 
   {% block content %}
+ {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
     <div class="list-page">
       <div class="flex-container">
         <h2 >Add ingredients</h2>
@@ -13,5 +20,6 @@
         {{ form.as_p }}
         <button type="submit" class="btn btn-outline-primary">Create</button>
       </form>
+
     </div>
   {% endblock %}

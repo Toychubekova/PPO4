@@ -9,4 +9,4 @@ class Ingredients(models.Model):
 
     class Meta:
         db_table = 'Ingredients'
-        unique_together = ('Product_id', 'RawMaterial_id')
+        # unique_together = ('Product_id', 'RawMaterial_id')

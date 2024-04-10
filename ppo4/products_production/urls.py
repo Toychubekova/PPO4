@@ -1,7 +1,6 @@
 from django.urls import path
 
-from .views import Products_productionView, CreateProducts_productionView, \
-    UpdateProducts_productionView, DeleteProducts_productionView
+from products_production.views import Products_productionView, CreateProducts_productionView, UpdateProducts_productionView, DeleteProducts_productionView
 
 app_name = 'products_production'
 
