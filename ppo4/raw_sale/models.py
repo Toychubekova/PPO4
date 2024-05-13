@@ -14,23 +14,25 @@ class Budget(models.Model):
         return f'Budget: {self.quantity}'
 
 class RawSale(models.Model):
-    material = models.ForeignKey(RawMaterials,
-                                 on_delete=models.CASCADE,
-                                 related_name='raw_sales',
-                                 verbose_name='Raw Materials'
-                                 )
+    material = models.ForeignKey(
+        RawMaterials,
+        on_delete=models.CASCADE,
+        related_name='raw_sales',
+        verbose_name='Raw Materials'
+    )
     quantity = models.FloatField('Quantity')
     amount = models.FloatField('Amount')
     date = models.DateTimeField('Date and time', auto_now_add=True)
-    employees = models.ForeignKey(Employees,
-                                 on_delete=models.PROTECT,
-                                 related_name='procurements',
-                                 verbose_name='Employees'
-                                 )
+    employees = models.ForeignKey(
+        Employees,
+        on_delete=models.PROTECT,
+        related_name='procurements',
+        verbose_name='Employees'
+    )
 
     class Meta:
         verbose_name = 'Raw Sale'
-        verbose_name_plural = 'Raw Sales'
+        db_table = 'raw_sale'  # Указываем желаемое имя таблицы в базе данных
 
     def __str__(self):
         return f'Raw Sale {self.id}'

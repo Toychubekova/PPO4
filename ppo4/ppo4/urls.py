@@ -15,4 +15,5 @@ urlpatterns = [
     path('raw_sale/', include('raw_sale.urls')),
     path('products_sale/', include('products_sale.urls')),
     path('products_production/', include('products_production.urls')),
+    path('salaries/', include('salaries.urls')),
 ]

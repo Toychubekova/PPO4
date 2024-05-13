@@ -34,6 +34,7 @@ class Budget(models.Model):
 
     class Meta:
         verbose_name = 'Budget'
+        db_table = 'budget'  # Явное указание имени таблицы
 
     def __str__(self):
         return str(self.budget)

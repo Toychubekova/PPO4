@@ -1,0 +1,102 @@
+{% extends 'index.html' %}
+
+{% block body %}
+    <div class="list-page">
+        <h1 class="mt-5 mb-4">Заработная плата сотрудников</h1>
+        <form method="GET" action="{% url 'employee_salary_view' %}" id="filterForm">
+            <label for="year">Год:</label>
+            <select name="year" id="year">
+                {% for year in years %}
+                    <option value="{{ year }}" {% if year == selected_year %} selected {% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+            <label for="month">Месяц:</label>
+            <select name="month" id="month">
+                {% for month_number, month_name in months %}
+                    <option value="{{ month_number }}" {% if month_number == selected_month %} selected {% endif %}>{{ month_name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">Фильтр</button>
+        </form>
+        <p class="mt-2 fs-4">Бюджет: {{ budget.budget }}</p>
+        <p class="mt-2 fs-4">Общая сумма: {{ total }}</p>
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>Сотрудник</th>
+                    <th>К-во закупок</th>
+                    <th>К-во производств</th>
+                    <th>К-во продаж</th>
+                    <th>Общее к-во участий</th>
+                    <th>Оклад</th>
+                    <th>Бонус</th>
+                    <th>К выдаче</th>
+                    <th>Выдано</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for salary in salaries %}
+                    <tr>
+                        <td>{{ salary.employee }}</td>
+                        <td>{{ salary.purchases }}</td>
+                        <td>{{ salary.productions }}</td>
+                        <td>{{ salary.sales }}</td>
+                        <td>{{ salary.common_amount }}</td>
+                        <td>{{ salary.base_salary }}</td>
+                        <td>{{ salary.bonus_amount }}</td>
+                        <td>{{ salary.general_amount }}</td>
+                        <td>{{ salary.is_given }}</td>
+                        {% if not is_issued %}
+                            <td><a href="{% url 'salaries_edit' pk=salary.pk %}" class="btn btn-warning">Редактировать</a></td>
+                        {% else %}
+                            <td><a class="btn btn-warning">Нельзя редактировать</a></td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if not is_issued %}
+            <div class="mb-5">
+                <form method="POST" action="{% url 'issue_unissued_salaries' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="year" value="{{ selected_year }}">
+                    <input type="hidden" name="month" value="{{ selected_month }}">
+                    <button type="submit" class="btn btn-primary">Выдать всем</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearSelect = document.querySelector('select[name="year"]');
+            const monthSelect = document.querySelector('select[name="month"]');
+
+            function filterSalaryList() {
+                const form = this.closest('form');
+                form.submit();
+            }
+
+            yearSelect.addEventListener('change', filterSalaryList);
+            monthSelect.addEventListener('change', filterSalaryList);
+
+            const selectedYear = localStorage.getItem('selectedYear');
+            const selectedMonth = localStorage.getItem('selectedMonth');
+
+            if (selectedYear) {
+                yearSelect.value = selectedYear;
+            }
+            if (selectedMonth) {
+                monthSelect.value = selectedMonth;
+            }
+
+            yearSelect.addEventListener('change', function() {
+                localStorage.setItem('selectedYear', yearSelect.value);
+            });
+            monthSelect.addEventListener('change', function() {
+                localStorage.setItem('selectedMonth', monthSelect.value);
+            });
+        });
+    </script>
+{% endblock %}

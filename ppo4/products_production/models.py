@@ -7,7 +7,7 @@ class Product_production(models.Model):
     product = models.ForeignKey(
         Finishs,
         on_delete=models.PROTECT,
-        related_name='product_production',
+        related_name='productions',
         verbose_name='Product'
     )
     quantity = models.FloatField('Quantity')
@@ -16,13 +16,13 @@ class Product_production(models.Model):
     employees = models.ForeignKey(
         Employees,
         on_delete=models.PROTECT,
-        related_name='productions',
+        related_name='produced_products',
         verbose_name='Employee'
     )
 
     class Meta:
-        verbose_name = 'Product production'
-        verbose_name_plural = 'Products production'
+        db_table = 'product_production'
 
     def __str__(self):
         return f'Product production {self.id}'
+

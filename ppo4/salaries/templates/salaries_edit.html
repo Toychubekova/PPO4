@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+
+{% block body %}
+
+<div>
+    <h1>Редактирование зарплаты</h1>
+
+    <form method="post" action="{% url 'salaries_edit' pk=salary.pk %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Сохранить</button>
+    </form>
+
+    <div>
+        <strong>
+            <a href="{% url 'employee_salary_view' %}">Назад к списку записей</a>
+        </strong>
+    </div>
+
+</div>
+
+{% endblock %}
